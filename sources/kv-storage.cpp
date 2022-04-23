@@ -2,7 +2,7 @@
 
 #include <stdexcept>
 
-#include <example.hpp>
+#include <kv-storage.hpp>
 
 auto example() -> void {
   throw std::runtime_error("not implemented");
