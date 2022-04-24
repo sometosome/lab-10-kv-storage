@@ -20,6 +20,8 @@
 #include <list>
 #include <picosha2.hpp>
 
+using FDescriptorContainer = std::vector<rocksdb::ColumnFamilyDescriptor>;
+
 struct Arguments {
     std::string logLevel;
     size_t threadCount;
