@@ -17,12 +17,12 @@ dbEditor::dbEditor(std::string path, Arguments _arguments) {
   DB* db;
   Status status;
   status = rocksdb::DB::Open(options, this->db_path, &db);
-  if(db)
+  if (db)
   {
     delete db;
   }
   status = rocksdb::DB::Open(options, this->arguments.output, &db);
-  if(db)
+  if (db)
   {
     delete db;
   }
@@ -93,7 +93,9 @@ std::vector<ColumnFamilyDescriptor>* dbEditor::getTables(std::string path) {
   return column_families;
 }
 
-void dbEditor::addValue(std::string tableName, std::string key, std::string value) {
+void dbEditor::addValue(std::string tableName,
+                        std::string key,
+                        std::string value) {
   DB* db;
   std::vector<ColumnFamilyHandle*> handles;
   Status status;
@@ -145,7 +147,8 @@ void dbEditor::showTable(std::string name, std::string path) {
   assert(status.ok());
 
   std::cout << "Table name: " << name << std::endl;
-  rocksdb::Iterator* it = db->NewIterator(rocksdb::ReadOptions(), handles[position]);
+  rocksdb::Iterator* it = db->NewIterator(rocksdb::ReadOptions(),
+                                          handles[position]);
   for (it->SeekToFirst(); it->Valid(); it->Next())
   {
     std::cout << "\t" << it->key().ToString() << ": " << it->value().ToString()
@@ -225,7 +228,9 @@ void dbEditor::createTable(std::string name) {
   }
 }
 
-void dbEditor::createTables(std::vector<ColumnFamilyDescriptor>* tables, DB* outputDb, std::vector<ColumnFamilyHandle*> outputHandles) {
+void dbEditor::createTables(std::vector<ColumnFamilyDescriptor>* tables,
+                            DB* outputDb,
+                            std::vector<ColumnFamilyHandle*> outputHandles) {
   for (size_t i = 1; i != tables->size(); i++) {
     ColumnFamilyHandle* cf;
     Status s = outputDb->CreateColumnFamily(ColumnFamilyOptions(),
@@ -243,7 +248,12 @@ void dbEditor::createTables(std::vector<ColumnFamilyDescriptor>* tables, DB* out
   }
 }
 
-void dbEditor::readRequest(size_t id, std::vector<ColumnFamilyHandle*>& inputHandles, DB* inputDb, std::mutex& _mutex, std::queue<Value>& _values, size_t threadsNum) {
+void dbEditor::readRequest(size_t id,
+                           std::vector<ColumnFamilyHandle*>& inputHandles,
+                           DB* inputDb,
+                           std::mutex& _mutex,
+                           std::queue<Value>& _values,
+                           size_t threadsNum) {
   for (size_t i = id; i < inputHandles.size(); i += threadsNum)
   {
     rocksdb::Iterator* it =
@@ -261,7 +271,10 @@ void dbEditor::readRequest(size_t id, std::vector<ColumnFamilyHandle*>& inputHan
   }
 }
 
-void dbEditor::writeRequest(std::vector<ColumnFamilyHandle*>& outputHandles, DB* outputDB, std::mutex& _mutex, std::queue<Value>& _values) {
+void dbEditor::writeRequest(std::vector<ColumnFamilyHandle*>& outputHandles,
+                            DB* outputDB,
+                            std::mutex& _mutex,
+                            std::queue<Value>& _values) {
   while (!_values.empty())
   {
     _mutex.lock();
@@ -306,8 +319,8 @@ void dbEditor::hashDataBaseInit() {
       }
     }
     assert(status.ok());
-    status = DB::Open(options, this->arguments.output, *outputTables, &outputHandles,
-                 &outputDb);
+    status = DB::Open(options, this->arguments.output,
+                      *outputTables, &outputHandles,&outputDb);
     if (!status.ok())
     {
       if (this->arguments.logLevel == boost::log::trivial::error)
@@ -324,7 +337,11 @@ void dbEditor::hashDataBaseInit() {
     }
     for (size_t i = 0; i != this->arguments.threadCount; ++i)
     {
-      std::thread thread(&dbEditor::readRequest, i, std::ref(inputHandles), inputDb, std::ref(this->mutex), std::ref(this->values), this->arguments.threadCount);
+      std::thread thread(&dbEditor::readRequest, i,
+                         std::ref(inputHandles),
+                         inputDb, std::ref(this->mutex),
+                         std::ref(this->values),
+                         this->arguments.threadCount);
       if (thread.joinable())
       {
         thread.join();
@@ -339,7 +356,11 @@ void dbEditor::hashDataBaseInit() {
     }
     for (size_t i = 0; i != this->arguments.threadCount; i++)
     {
-      std::thread thread(&dbEditor::writeRequest, std::ref(outputHandles), outputDb, std::ref(this->mutex), std::ref(this->values));
+      std::thread thread(&dbEditor::writeRequest,
+                         std::ref(outputHandles),
+                         outputDb,
+                         std::ref(this->mutex),
+                         std::ref(this->values));
       if (thread.joinable())
       {
         thread.join();

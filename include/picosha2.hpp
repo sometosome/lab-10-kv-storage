@@ -18,8 +18,8 @@ Copyright (C) 2017 okdshin
         THE SOFTWARE.
             */
 
-#ifndef LAB10_PICOSHA2_H
-#define LAB10_PICOSHA2_H
+#ifndef INCLUDE_PICOSHA2_HPP_
+#define INCLUDE_PICOSHA2_HPP_
 #ifndef PICOSHA2_BUFFER_SIZE_FOR_INPUT_ITERATOR
 #define PICOSHA2_BUFFER_SIZE_FOR_INPUT_ITERATOR \
     1048576  //=1024*1024: default is 1MB memory
@@ -31,7 +31,8 @@ Copyright (C) 2017 okdshin
 #include <sstream>
 #include <vector>
 #include <fstream>
-        namespace picosha2 {
+
+namespace picosha2 {
   typedef unsigned long word_t;
   typedef unsigned char byte_t;
 
@@ -369,4 +370,4 @@ template <typename InIter, typename OutIter>
 
   }
 }// namespace picosha2
-#endif  // LAB10_PICOSHA2_H
+#endif  // INCLUDE_PICOSHA2_HPP_
