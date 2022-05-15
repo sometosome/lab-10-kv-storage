@@ -320,7 +320,7 @@ void dbEditor::hashDataBaseInit() {
     }
     assert(status.ok());
     status = DB::Open(options, this->arguments.output,
-                      *outputTables, &outputHandles,&outputDb);
+                     *outputTables, &outputHandles, &outputDb);
     if (!status.ok())
     {
       if (this->arguments.logLevel == boost::log::trivial::error)
