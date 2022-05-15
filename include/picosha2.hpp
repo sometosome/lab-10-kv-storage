@@ -33,8 +33,8 @@ Copyright (C) 2017 okdshin
 #include <fstream>
 
 namespace picosha2 {
-  typedef unsigned long word_t;
-  typedef unsigned char byte_t;
+  typedef int32_t word_t;
+  typedef int8_t byte_t;
 
   static const size_t k_digest_size = 32;
 
@@ -60,7 +60,7 @@ namespace picosha2 {
                                             0xa54ff53a, 0x510e527f, 0x9b05688c,
                                             0x1f83d9ab, 0x5be0cd19};
 
-  inline word_t ch(word_t x, word_t y, word_t z) { return (x & y) ^ ((~x) & z); }
+  inline word_t ch(word_t x, word_t y, word_t z) {return (x & y) ^ ((~x) & z);}
 
   inline word_t maj(word_t x, word_t y, word_t z) {
     return (x & y) ^ (x & z) ^ (y & z);
@@ -71,18 +71,26 @@ namespace picosha2 {
     return mask_32bit((x >> n) | (x << (32 - n)));
   }
 
-  inline word_t bsig0(word_t x) { return rotr(x, 2) ^ rotr(x, 13) ^ rotr(x, 22); }
+  inline word_t bsig0(word_t x) {
+    return rotr(x, 2) ^ rotr(x, 13) ^ rotr(x, 22);
+  }
 
-  inline word_t bsig1(word_t x) { return rotr(x, 6) ^ rotr(x, 11) ^ rotr(x, 25); }
+  inline word_t bsig1(word_t x) {
+    return rotr(x, 6) ^ rotr(x, 11) ^ rotr(x, 25);
+  }
 
   inline word_t shr(word_t x, std::size_t n) {
     assert(n < 32);
     return x >> n;
   }
 
-  inline word_t ssig0(word_t x) { return rotr(x, 7) ^ rotr(x, 18) ^ shr(x, 3); }
+  inline word_t ssig0(word_t x) {
+    return rotr(x, 7) ^ rotr(x, 18) ^ shr(x, 3);
+  }
 
-  inline word_t ssig1(word_t x) { return rotr(x, 17) ^ rotr(x, 19) ^ shr(x, 10); }
+  inline word_t ssig1(word_t x) {
+    return rotr(x, 17) ^ rotr(x, 19) ^ shr(x, 10);
+  }
 
   template <typename RaIter1, typename RaIter2>
   void hash256_block(RaIter1 message_digest, RaIter2 first, RaIter2 last) {

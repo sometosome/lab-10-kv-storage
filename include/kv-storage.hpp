@@ -76,7 +76,8 @@ class dbEditor {
   std::mutex mutex;
   std::queue<Value> values;
 
-  std::vector<ColumnFamilyDescriptor>* getTables(std::string name, size_t& position); //
+  std::vector<ColumnFamilyDescriptor>* getTables(std::string name,
+                                                 size_t& position); //
   std::vector<ColumnFamilyDescriptor>* getTables(std::string path);
 };
 
