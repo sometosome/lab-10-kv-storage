@@ -35,8 +35,8 @@ Copyright (C) 2017 okdshin
 #include <string>
 
 namespace picosha2 {
-typedef int64_t word_t;
-typedef int8_t byte_t;
+typedef uint32_t word_t;
+typedef uint8_t byte_t;
 
 //static const size_t k_digest_size = 32;
 
