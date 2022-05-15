@@ -32,6 +32,7 @@ Copyright (C) 2017 okdshin
 #include <sstream>
 #include <vector>
 #include <fstream>
+#include <string>
 
 namespace picosha2 {
 typedef int32_t word_t;
@@ -278,9 +279,9 @@ class hash256_one_by_one {
 
 inline void get_hash_hex_string(const hash256_one_by_one& hasher,
                                 std::string& hex_str) {
-  byte_t hash[k_digest_size];
-  hasher.get_hash_bytes(hash, hash + k_digest_size);
-  return bytes_to_hex_string(hash, hash + k_digest_size, hex_str);
+  byte_t hash[32];
+  hasher.get_hash_bytes(hash, hash + 32);
+  return bytes_to_hex_string(hash, hash + 32, hex_str);
 }
 
 inline std::string get_hash_hex_string(const hash256_one_by_one& hasher) {
@@ -320,7 +321,7 @@ void hash256_impl(InputIter first, InputIter last, OutIter first2,
   hasher.finish();
   hasher.get_hash_bytes(first2, last2);
 }
-} // namespace detail
+}// namespace impl
 
 template <typename InIter, typename OutIter>
 void hash256(InIter first, InIter last, OutIter first2, OutIter last2,
@@ -347,10 +348,10 @@ void hash256(const InContainer& src, OutContainer& dst) {
 
 template <typename InIter>
 void hash256_hex_string(InIter first, InIter last, std::string& hex_str) {
-  byte_t hashed[k_digest_size];
-  hash256(first, last, hashed, hashed + k_digest_size);
+  byte_t hashed[32];
+  hash256(first, last, hashed, hashed + 32);
   std::ostringstream oss;
-  output_hex(hashed, hashed + k_digest_size, oss);
+  output_hex(hashed, hashed + 32, oss);
   hex_str.assign(oss.str());
 }
 
@@ -377,8 +378,7 @@ std::string hash256_hex_string(const InContainer& src) {
 template<typename OutIter>void hash256(std::ifstream& f,
                                        OutIter first, OutIter last){
   hash256(std::istreambuf_iterator<char>(f),
-          std::istreambuf_iterator<char>(), first,last);
-
+          std::istreambuf_iterator<char>(), first, last);
 }
 }// namespace picosha2
 #endif  // INCLUDE_PICOSHA2_HPP_
