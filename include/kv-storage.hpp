@@ -19,13 +19,60 @@
 #include <vector>
 #include <list>
 #include <picosha2.hpp>
+#include <queue>
 
-using FDescriptorContainer = std::vector<rocksdb::ColumnFamilyDescriptor>;
+using ROCKSDB_NAMESPACE::ColumnFamilyDescriptor;
+using ROCKSDB_NAMESPACE::ColumnFamilyHandle;
+using ROCKSDB_NAMESPACE::ColumnFamilyOptions;
+using ROCKSDB_NAMESPACE::DB;
+using ROCKSDB_NAMESPACE::DBOptions;
+using ROCKSDB_NAMESPACE::Options;
+using ROCKSDB_NAMESPACE::ReadOptions;
+using ROCKSDB_NAMESPACE::Slice;
+using ROCKSDB_NAMESPACE::Status;
+using ROCKSDB_NAMESPACE::WriteBatch;
+using ROCKSDB_NAMESPACE::WriteOptions;
+
+#define MESSAGE_LOG(lvl)\
+    BOOST_LOG_STREAM_WITH_PARAMS(::boost::log::trivial::logger::get(),\
+        (::boost::log::keywords::severity = lvl))
 
 struct Arguments {
-    std::string logLevel;
+    std::string logLevelString;
+    boost::log::trivial::severity_level logLevel;
     size_t threadCount;
     std::string output;
+};
+
+struct Value
+{
+  size_t handle_id;
+  std::string key;
+  std::string value;
+};
+
+class dbEditor {
+ public:
+  explicit dbEditor(std::string path, Arguments _arguments);
+  void addValue(std::string tableName, std::string key, std::string value);
+  void showTable(std::string name, std::string path);
+  void showAllTables(std::string path);
+  void createTable(std::string name);
+  void hashDataBaseInit();
+  void createTables(std::vector<ColumnFamilyDescriptor>* tables, DB* outputDb, std::vector<ColumnFamilyHandle*> outputHandles);
+
+  static void readRequest(size_t id, std::vector<ColumnFamilyHandle*>& inputHandles, DB* inputDb, std::mutex& _mutex, std::queue<Value>& _values, size_t threadsNum);
+  static void writeRequest(std::vector<ColumnFamilyHandle*>& outputHandles, DB* outputDB, std::mutex& _mutex, std::queue<Value>& _values);
+
+ private:
+  Arguments arguments;
+  std::string db_path;
+  Options options;
+  std::mutex mutex;
+  std::queue<Value> values;
+
+  std::vector<ColumnFamilyDescriptor>* getTables(std::string name, size_t& position);
+  std::vector<ColumnFamilyDescriptor>* getTables(std::string path);
 };
 
 auto example() -> void;
