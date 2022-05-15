@@ -1,7 +1,7 @@
 // Copyright 2021 Your Name <your_email>
 
-#ifndef INCLUDE_EXAMPLE_HPP_
-#define INCLUDE_EXAMPLE_HPP_
+#ifndef INCLUDE_KV_STORAGE_HPP_
+#define INCLUDE_KV_STORAGE_HPP_
 
 #include <iostream>
 #include <string>
@@ -34,7 +34,7 @@ using ROCKSDB_NAMESPACE::WriteBatch;
 using ROCKSDB_NAMESPACE::WriteOptions;
 
 #define MESSAGE_LOG(lvl)\
-    BOOST_LOG_STREAM_WITH_PARAMS(::boost::log::trivial::logger::get(),\
+    BOOST_LOG_STREAM_WITH_PARAMS(::boost::log::trivial::logger::get(), \
         (::boost::log::keywords::severity = lvl))
 
 struct Arguments {
@@ -59,10 +59,15 @@ class dbEditor {
   void showAllTables(std::string path);
   void createTable(std::string name);
   void hashDataBaseInit();
-  void createTables(std::vector<ColumnFamilyDescriptor>* tables, DB* outputDb, std::vector<ColumnFamilyHandle*> outputHandles);
+  void createTables(std::vector<ColumnFamilyDescriptor>* tables, DB* outputDb,
+                    std::vector<ColumnFamilyHandle*> outputHandles);
 
-  static void readRequest(size_t id, std::vector<ColumnFamilyHandle*>& inputHandles, DB* inputDb, std::mutex& _mutex, std::queue<Value>& _values, size_t threadsNum);
-  static void writeRequest(std::vector<ColumnFamilyHandle*>& outputHandles, DB* outputDB, std::mutex& _mutex, std::queue<Value>& _values);
+  static void readRequest(size_t id, std::vector<ColumnFamilyHandle*>&
+      inputHandles, DB* inputDb, std::mutex& _mutex, std::queue<Value>& _values,
+                          size_t threadsNum);
+  static void writeRequest(std::vector<ColumnFamilyHandle*>& outputHandles,
+                           DB* outputDB, std::mutex& _mutex,
+                           std::queue<Value>& _values);
 
  private:
   Arguments arguments;
@@ -71,10 +76,10 @@ class dbEditor {
   std::mutex mutex;
   std::queue<Value> values;
 
-  std::vector<ColumnFamilyDescriptor>* getTables(std::string name, size_t& position);
+  std::vector<ColumnFamilyDescriptor>* getTables(std::string name, size_t& position); //
   std::vector<ColumnFamilyDescriptor>* getTables(std::string path);
 };
 
 auto example() -> void;
 
-#endif // INCLUDE_EXAMPLE_HPP_
+#endif // INCLUDE_KV_STORAGE_HPP_
