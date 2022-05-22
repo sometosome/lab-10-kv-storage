@@ -29,7 +29,7 @@ dbEditor::dbEditor(std::string path, Arguments _arguments) {
 }
 
 std::vector<ColumnFamilyDescriptor>* dbEditor::getTables
-    (std::string name, size_t& position) {
+    (std::string name, size_t& position) const {
   auto* column_families = new std::vector<ColumnFamilyDescriptor>;
   auto* column_names = new std::vector<std::string>;
   bool already_in_list = name == "";
@@ -93,6 +93,21 @@ std::vector<ColumnFamilyDescriptor>* dbEditor::getTables(std::string path) {
   return column_families;
 }
 
+void CleanUp(std::vector<ColumnFamilyHandle*>& handles, std::vector<ColumnFamilyDescriptor>* column_families, DB* db) {
+  for (auto handle : handles)
+  {
+    db->DestroyColumnFamilyHandle(handle);
+  }
+  if (column_families)
+  {
+    delete column_families;
+  }
+  if (db)
+  {
+    delete db;
+  }
+}
+
 void dbEditor::addValue(std::string tableName,
                         std::string key,
                         std::string value) {
@@ -110,29 +125,15 @@ void dbEditor::addValue(std::string tableName,
   if (!status.ok())
   {
     std::cerr << status.ToString() << std::endl;
-    goto CleanUp;
+    CleanUp(handles, column_families, db);
   }
   assert(status.ok());
 
   db->Put(WriteOptions(), handles[position], key, value);
-  goto CleanUp;
-
-CleanUp:
-  for (auto handle : handles)
-  {
-    db->DestroyColumnFamilyHandle(handle);
-  }
-  if (column_families)
-  {
-    delete column_families;
-  }
-  if (db)
-  {
-    delete db;
-  }
+  CleanUp(handles, column_families, db);
 }
 
-void dbEditor::showTable(std::string name, std::string path) {
+void dbEditor::showTable(std::string name, std::string path) const {
   DB* db;
   size_t position;
   auto* column_families = getTables(name, position);
@@ -155,7 +156,7 @@ void dbEditor::showTable(std::string name, std::string path) {
               << std::endl;
   }
 
-  for (auto handle : handles)
+  for (auto & handle : handles)
   {
     db->DestroyColumnFamilyHandle(handle);
   }
@@ -173,7 +174,7 @@ void dbEditor::showTable(std::string name, std::string path) {
   }
 }
 
-void dbEditor::showAllTables(std::string path) {
+void dbEditor::showAllTables(const std::string& path) const  {
   size_t position;
   auto* column_families = getTables("", position);
 
@@ -354,7 +355,7 @@ void dbEditor::hashDataBaseInit() {
       MESSAGE_LOG(this->arguments.logLevel)
           << "Writing results to output database";
     }
-    for (size_t i = 0; i != this->arguments.threadCount; i++)
+    for (size_t i = 0; i != this->arguments.threadCount; ++i)
     {
       std::thread thread(&dbEditor::writeRequest,
                          std::ref(outputHandles),

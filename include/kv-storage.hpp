@@ -55,8 +55,8 @@ class dbEditor {
  public:
   explicit dbEditor(std::string path, Arguments _arguments);
   void addValue(std::string tableName, std::string key, std::string value);
-  void showTable(std::string name, std::string path);
-  void showAllTables(std::string path);
+  void showTable(std::string name, std::string path) const;
+  void showAllTables(const std::string& path) const;
   void createTable(std::string name);
   void hashDataBaseInit();
   void createTables(std::vector<ColumnFamilyDescriptor>* tables, DB* outputDb,
@@ -77,7 +77,7 @@ class dbEditor {
   std::queue<Value> values;
 
   std::vector<ColumnFamilyDescriptor>* getTables(std::string name,
-                                                 size_t& position); //
+                                                 size_t& position) const;
   std::vector<ColumnFamilyDescriptor>* getTables(std::string path);
 };
 
