@@ -1,4 +1,4 @@
-// Copyright 2021 Your Name <your_email>
+// Copyright 2021 sometosome
 
 #ifndef INCLUDE_KV_STORAGE_HPP_
 #define INCLUDE_KV_STORAGE_HPP_
