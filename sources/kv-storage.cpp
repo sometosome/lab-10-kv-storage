@@ -93,7 +93,8 @@ std::vector<ColumnFamilyDescriptor>* dbEditor::getTables(std::string path) {
   return column_families;
 }
 
-void CleanUp(std::vector<ColumnFamilyHandle*>& handles, std::vector<ColumnFamilyDescriptor>* column_families, DB* db) {
+void CleanUp(std::vector<ColumnFamilyHandle*>& handles,
+             std::vector<ColumnFamilyDescriptor>* column_families, DB* db) {
   for (auto handle : handles)
   {
     db->DestroyColumnFamilyHandle(handle);
